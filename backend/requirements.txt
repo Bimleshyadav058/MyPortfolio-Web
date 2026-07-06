@@ -1,0 +1,11 @@
+flask
+flask-cors
+flask-sqlalchemy
+werkzeug
+
+#python -m venv .venv
+#source .venv/bin/activate
+#pip install -r requirements.txt
+#pip install Flask-Mail
+#pip install flask flask-cors flask-mail python-dotenv
+#python app.py

@@ -1,0 +1,20 @@
+[
+  {
+    "id": 70,
+    "title": "Heart diseases",
+    "description": "Tech: Python, Pandas, NumPy, Scikit-learn, XGBoost, Random Forest, Flask, React, Tailwind CSS, Git \uf0b7 Built a machine learning model to predict heart disease risk from clinical patient data, achieving over 85% classification accuracy. \uf0b7 Implemented and compared Random Forest and XGBoost algorithms; selected the best-performing model after cross- validation. \uf0b7 Handled end-to-end data pipeline including preprocessing, feature engineering, and model evaluation using Scikit-learn. \uf0b7 Developed a React-based frontend for data input and result visualization, connected to a Flask REST API backend.",
+    "github": "https://github.com/Bimleshyadav058/Heartdiseases",
+    "live": "https://github.com/Bimleshyadav058/Heartdiseases",
+    "image": "http://127.0.0.1:5000/uploads/projects/Screenshot_2026-05-26_at_11.38.59_PM.png",
+    "ppt": "http://127.0.0.1:5000/uploads/ppt/Heart-Ai.pptx"
+  },
+  {
+    "id": 71,
+    "title": "Trust-bridge",
+    "description": "Tech: React, Node.js, Express.js, MongoDB, Tailwind CSS, Hashgraph \uf0b7 Designed and developed a full-stack web platform connecting verified NGOs with donors, reducing friction in the donation process. \uf0b7 Integrated NGO verification workflow so donors can review campaigns, funding goals, and credentials before donating. \uf0b7 Built secure transaction flows using Hashgraph, ensuring donation records are tamper-proof and auditable. \uf0b7 Implemented responsive UI with React and Tailwind CSS, ensuring smooth experience across desktop and mobile devices.",
+    "github": "https://github.com/ankitkaushal8292/ngo-project",
+    "live": "",
+    "image": "http://127.0.0.1:5000/uploads/projects/Trust-bridge.png",
+    "ppt": null
+  }
+]

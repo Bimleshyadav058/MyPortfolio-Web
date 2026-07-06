@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "title": "Madhiyan",
+    "file": "http://127.0.0.1:5000/uploads/certificates/IMG_20241028_152601_1.jpg"
+  },
+  {
+    "id": 2,
+    "title": "Artificial Intelligence",
+    "file": "http://127.0.0.1:5000/uploads/certificates/Screenshot_2025-09-07_at_9.20.07_PM.png"
+  },
+  {
+    "id": 3,
+    "title": "class 8",
+    "file": "http://127.0.0.1:5000/uploads/certificates/20160102_021657.jpg"
+  }
+]
