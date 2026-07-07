@@ -38,9 +38,9 @@ const [certificates, setCertificates] = useState([]);
   });
 };
 
-  // ===== FETCH PROJECTS =====
-  const loadProjects = () => {
-    axios.get("http://127.0.0.1:5000/projects")
+ // ===== FETCH PROJECTS =====
+const loadProjects = () => {
+  axios.get(`${import.meta.env.VITE_API_URL}/projects`)
       .then(res => setProjects(res.data))
       .catch(err => console.log(err));
   };
@@ -58,9 +58,10 @@ useEffect(() => {
 
 console.log(projects); // 👈 ADD THIS
 
-const loadCertificates = () => {
-  axios
-    .get("http://127.0.0.1:5000/certificates")
+// ===== FETCH PROJECTS =====
+const loadProjects = () => {
+  axios.get(`${import.meta.env.VITE_API_URL}/projects`)
+
     .then((res) => setCertificates(res.data))
     .catch(console.log);
 };
@@ -94,7 +95,7 @@ const uploadProject = async () => {
     if (editId) {
 
       await axios.put(
-        `http://127.0.0.1:5000/edit-project/${editId}`,
+        `${import.meta.env.VITE_API_URL}/edit-project/${editId}`,
         formData
       );
 
@@ -103,10 +104,10 @@ const uploadProject = async () => {
 
     } else {
 
-      await axios.post(
-        "http://127.0.0.1:5000/upload-project",
-        formData
-      );
+     await axios.post(
+  `${import.meta.env.VITE_API_URL}/upload-project`,
+  formData
+);
 
       showToast("Project Uploaded ✅");
     }
@@ -133,7 +134,9 @@ const uploadProject = async () => {
   // ===== DELETE PROJECT =====
   const deleteProject = async (id) => {
     try {
-      await axios.delete(`http://127.0.0.1:5000/delete-project/${id}`);
+     await axios.delete(
+  `${import.meta.env.VITE_API_URL}/delete-project/${id}`
+);
       showToast("Project Deleted ✅");
       loadProjects();
     } catch (err) {
@@ -159,7 +162,7 @@ const uploadProject = async () => {
     );
 
     await axios.post(
-      "http://127.0.0.1:5000/upload-certificate",
+      `${import.meta.env.VITE_API_URL}/upload-certificate`,
       formData
     );
 
@@ -186,7 +189,7 @@ const uploadProject = async () => {
 const deleteCertificate = async (id) => {
   try {
     await axios.delete(
-      `http://127.0.0.1:5000/delete-certificate/${id}`
+      `${import.meta.env.VITE_API_URL}/delete-certificate/${id}`
     );
 
     showToast("Certificate Deleted ✅");
@@ -204,7 +207,10 @@ const deleteCertificate = async (id) => {
       const formData = new FormData();
       formData.append("file", resume);
 
-      await axios.post("http://127.0.0.1:5000/upload-resume", formData);
+      await axios.post(
+  `${import.meta.env.VITE_API_URL}/upload-resume`,
+  formData
+);
 
       showToast("Resume Uploaded ✅");
 

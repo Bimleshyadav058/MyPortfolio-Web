@@ -5,12 +5,12 @@ function Certificates() {
 
   const [certificates, setCertificates] = useState([]);
 
-  useEffect(() => {
-    axios
-      .get("http://127.0.0.1:5000/certificates")
-      .then((res) => setCertificates(res.data))
-      .catch(console.log);
-  }, []);
+ useEffect(() => {
+  axios
+    .get(`${import.meta.env.VITE_API_URL}/certificates`)
+    .then((res) => setCertificates(res.data))
+    .catch(console.log);
+}, []);
 
 return (
  <section className="certificates-section">

@@ -7,8 +7,8 @@ function ProjectDetails() {
   const { id } = useParams();
   const [project, setProject] = useState({});
 
-  useEffect(() => {
-    axios.get(`http://127.0.0.1:5000/project/${id}`)
+ useEffect(() => {
+  axios.get(`${import.meta.env.VITE_API_URL}/project/${id}`)
       .then(res => setProject(res.data));
   }, []);
 

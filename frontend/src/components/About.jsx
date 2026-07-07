@@ -1,6 +1,23 @@
 import "../style.css";
 
 function About() {
+
+  const downloadResume = async () => {
+    try {
+     const res = await fetch(`${import.meta.env.VITE_API_URL}/download-resume`);
+const data = await res.json();
+
+      if (data.url) {
+        window.open(data.url, "_blank");
+      } else {
+        alert("Resume not found");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to load resume");
+    }
+  };
+
   return (
     <section className="about" id="about">
 
@@ -19,7 +36,7 @@ function About() {
 
           <p>
             Hi, I'm <b>Bimlesh Yadav</b> — a passionate Web Developer.
-            I build modern, responsive, and user-friendly websites using 
+            I build modern, responsive, and user-friendly websites using
             React, Flask, and modern technologies.
           </p>
 
@@ -29,25 +46,29 @@ function About() {
           </p>
 
           <div style={{ marginTop: "20px" }}>
-            
+
             {/* ✅ VIEW */}
-            <a
+            <button
               className="btn"
-              href="http://127.0.0.1:5000/download-resume"
-              target="_blank"
-              rel="noreferrer"
+              onClick={downloadResume}
             >
               View Resume
-            </a>
+            </button>
 
             {/* ✅ DOWNLOAD */}
-            <a
-              href="http://127.0.0.1:5000/download-resume"
-              target="_blank"
-              style={{ marginLeft: "15px", color: "orange" }}
+            <button
+              onClick={downloadResume}
+              style={{
+                marginLeft: "15px",
+                color: "orange",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                fontSize: "16px"
+              }}
             >
               Download Resume
-            </a>
+            </button>
 
           </div>
         </div>

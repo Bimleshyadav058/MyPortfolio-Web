@@ -7,9 +7,10 @@ function Project() {
   const [openId, setOpenId] = useState(null);
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:5000/projects")
-      .then(res => setProjects(res.data));
-  }, []);
+  axios
+    .get(`${import.meta.env.VITE_API_URL}/projects`)
+    .then(res => setProjects(res.data));
+}, []);
 
   const toggleProject = (id) => {
     setOpenId(openId === id ? null : id);

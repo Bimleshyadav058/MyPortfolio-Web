@@ -11,9 +11,12 @@ function AdminLogin() {
 
   const login = async () => {
     try {
-      const res = await axios.post("http://127.0.0.1:5000/admin-login", {
-        password
-      });
+      const res = await axios.post(
+  `${import.meta.env.VITE_API_URL}/admin-login`,
+  {
+    password,
+  }
+);
 
       if (res.data.success) {
         localStorage.setItem("admin", "true");
@@ -30,7 +33,7 @@ function AdminLogin() {
 
   const forgotPassword = async () => {
     try {
-      const res = await axios.post("http://127.0.0.1:5000/forgot-password", {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/forgot-password`, {
         email: "yadavbimleshnarayan98@gmail.com"
       });
 
