@@ -6,6 +6,8 @@ import os
 import secrets
 import werkzeug
 import json
+import cloudinary
+import cloudinary.uploader
 
 
 # ===== LOAD ENV =====
@@ -13,6 +15,13 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
+
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    secure=True
+)
 
 # ===== MAIL CONFIG =====
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -92,24 +101,43 @@ def upload_resume():
         if not file:
             return jsonify({"success": False, "error": "No file"})
 
-        filepath = os.path.join(RESUME_FOLDER, "resume.pdf")
-        file.save(filepath)
+        upload_result = cloudinary.uploader.upload(
+    file,
+    folder="portfolio/resume",
+    use_filename=True,
+    unique_filename=False,
+    overwrite=True
+)
+
+        resume_data = {
+            "resume": upload_result["secure_url"]
+        }
+
+        with open("resume.json", "w") as f:
+            json.dump(resume_data, f, indent=4)
 
         return jsonify({"success": True})
 
     except Exception as e:
         print("RESUME ERROR:", e)
         return jsonify({"success": False})
-
 @app.route("/download-resume")
 def download_resume():
-    filepath = os.path.join(RESUME_FOLDER, "resume.pdf")
+    try:
+        if not os.path.exists("resume.json"):
+            return jsonify({"error": "No resume"})
 
-    if not os.path.exists(filepath):
+        with open("resume.json", "r") as f:
+            resume_data = json.load(f)
+
+        return jsonify({
+            "url": resume_data["resume"]
+        })
+
+    except Exception as e:
+        print("DOWNLOAD ERROR:", e)
         return jsonify({"error": "No resume"})
-
-    return send_from_directory(RESUME_FOLDER, "resume.pdf")
-
+    
 # ================= IMAGE SERVE =================
 @app.route('/uploads/projects/<filename>')
 def project_image(filename):
@@ -163,7 +191,6 @@ def get_projects():
 
 
 # ================= PROJECT =================
-
 @app.route("/upload-project", methods=["POST"])
 def upload_project():
     try:
@@ -174,18 +201,26 @@ def upload_project():
         filename = None
         ppt_name = None
 
-      
-        
-
+        # Upload image to Cloudinary
         if file:
-            filename = werkzeug.utils.secure_filename(file.filename)
-            filepath = os.path.join(PROJECT_FOLDER, filename)
-            file.save(filepath)
+            upload_result = cloudinary.uploader.upload(
+                file,
+                folder="portfolio/projects"
+            )
+            filename = upload_result["secure_url"]
 
+        # Upload PPT to Cloudinary
         if ppt:
-            ppt_name = werkzeug.utils.secure_filename(ppt.filename)
-            ppt_path = os.path.join(PPT_FOLDER, ppt_name)
-            ppt.save(ppt_path)
+            ppt_result = cloudinary.uploader.upload(
+    ppt,
+    resource_type="raw",
+    folder="portfolio/ppt",
+    public_id=os.path.splitext(ppt.filename)[0],
+    format="pptx",
+    overwrite=True
+)
+
+            ppt_name = ppt_result["secure_url"]
 
         project = {
             "id": max([p["id"] for p in projects], default=0) + 1,
@@ -193,8 +228,8 @@ def upload_project():
             "description": request.form.get("description"),
             "github": request.form.get("github"),
             "live": request.form.get("live"),
-            "image": f"http://127.0.0.1:5000/uploads/projects/{filename}" if filename else None,
-            "ppt": f"http://127.0.0.1:5000/uploads/ppt/{ppt_name}" if ppt_name else None
+            "image": filename,
+            "ppt": ppt_name
         }
 
         projects.append(project)
@@ -205,8 +240,8 @@ def upload_project():
     except Exception as e:
         print("UPLOAD ERROR:", e)
         return jsonify({"success": False})
-
-# ================= EDIT =================projects
+    
+# ================= EDIT PROJECT =================
 @app.route("/edit-project/<int:id>", methods=["PUT"])
 def edit_project(id):
     try:
@@ -219,19 +254,26 @@ def edit_project(id):
                 p["github"] = request.form.get("github")
                 p["live"] = request.form.get("live")
 
+                # Upload new image to Cloudinary
                 file = request.files.get("image")
                 if file:
-                    filename = werkzeug.utils.secure_filename(file.filename)
-                    filepath = os.path.join(PROJECT_FOLDER, filename)
-                    file.save(filepath)
-                    p["image"] = f"http://127.0.0.1:5000/uploads/projects/{filename}"
+                    upload_result = cloudinary.uploader.upload(
+                        file,
+                        folder="portfolio/projects"
+                    )
+                    p["image"] = upload_result["secure_url"]
 
+                # Upload new PPT to Cloudinary
                 ppt = request.files.get("ppt")
                 if ppt:
-                    ppt_name = werkzeug.utils.secure_filename(ppt.filename)
-                    ppt_path = os.path.join(PPT_FOLDER, ppt_name)
-                    ppt.save(ppt_path)
-                    p["ppt"] = f"http://127.0.0.1:5000/uploads/ppt/{ppt_name}"
+                    ppt_result = cloudinary.uploader.upload(
+                        ppt,
+                        resource_type="raw",
+                        folder="portfolio/ppt"
+                    )
+                    p["ppt"] = ppt_result["secure_url"]
+
+                break
 
         save_projects(projects)
         return jsonify({"success": True})
@@ -327,22 +369,21 @@ def upload_certificate():
         certificates = json.load(f)
 
     title = request.form.get("title")
-
     file = request.files.get("file")
 
     if not file:
         return jsonify({"success": False})
 
-    filename = werkzeug.utils.secure_filename(file.filename)
-
-    file.save(
-        os.path.join(CERTIFICATE_FOLDER, filename)
+    # Upload certificate to Cloudinary
+    upload_result = cloudinary.uploader.upload(
+        file,
+        folder="portfolio/certificates"
     )
 
     certificates.append({
         "id": len(certificates) + 1,
         "title": title,
-        "file": f"http://127.0.0.1:5000/uploads/certificates/{filename}"
+        "file": upload_result["secure_url"]
     })
 
     with open(CERTIFICATE_FILE, "w") as f:
@@ -374,16 +415,15 @@ def delete_certificate(id):
 
     return jsonify({"success": True})
 
+# @app.route("/uploads/certificates/<filename>")
+# def certificate_file(filename):
 
-@app.route("/uploads/certificates/<filename>")
-def certificate_file(filename):
-
-    return send_from_directory(
-        CERTIFICATE_FOLDER,
-        filename
-    )
+#     return send_from_directory(
+#         CERTIFICATE_FOLDER,
+#         filename
+#     )
 
 # ===== RUN =====
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
+    port = int(os.environ.get("PORT", 5001))
     app.run(host="0.0.0.0", port=port)
