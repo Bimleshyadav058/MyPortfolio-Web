@@ -58,13 +58,6 @@ useEffect(() => {
 
 console.log(projects); // 👈 ADD THIS
 
-// ===== FETCH PROJECTS =====
-const loadProjects = () => {
-  axios.get(`${import.meta.env.VITE_API_URL}/projects`)
-
-    .then((res) => setCertificates(res.data))
-    .catch(console.log);
-};
 
   // ===== SHOW TOAST =====
   const showToast = (msg) => {
