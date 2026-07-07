@@ -5,7 +5,7 @@
     "description": "Tech: React, Node.js, Express.js, MongoDB, Tailwind CSS, Hashgraph \uf0b7 Designed and developed a full-stack web platform connecting verified NGOs with donors, reducing friction in the donation process. \uf0b7 Integrated NGO verification workflow so donors can review campaigns, funding goals, and credentials before donating. \uf0b7 Built secure transaction flows using Hashgraph, ensuring donation records are tamper-proof and auditable. \uf0b7 Implemented responsive UI with React and Tailwind CSS, ensuring smooth experience across desktop and mobile devices.",
     "github": "https://github.com/ankitkaushal8292/ngo-project",
     "live": "",
-    "image": "http://127.0.0.1:5001/uploads/projects/Trust-bridge.png",
+    "image": "${import.meta.env.VITE_API_URL}/uploads/projects/Trust-bridge.png",
     "ppt": null
   },
   {
@@ -14,7 +14,7 @@
     "description": "",
     "github": "https://github.com/Bimleshyadav058/Heartdiseases",
     "live": "",
-    "image": null,
+    "image": "${import.meta.env.VITE_API_URL}/uploads/projects/Heartdiseases.png",
     "ppt": "https://res.cloudinary.com/zrx6l0mz/raw/upload/v1783406880/portfolio/ppt/Heart-Ai.pptx"
   }
 ]
