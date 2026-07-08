@@ -105,9 +105,11 @@ def upload_resume():
     file,
     resource_type="raw",
     folder="portfolio/resume",
-    public_id="resume",
+    use_filename=True,
+    unique_filename=False,
     overwrite=True
 )
+        print(upload_result)
 
         resume_data = {
             "resume": upload_result["secure_url"]
