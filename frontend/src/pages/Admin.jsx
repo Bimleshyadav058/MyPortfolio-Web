@@ -209,27 +209,34 @@ const deleteCertificate = async (id) => {
 
   // ===== RESUME UPLOAD =====
  const uploadResume = async () => {
-
   if (!resume) {
     showToast("Select Resume First");
     return;
   }
-    try {
-      const formData = new FormData();
-      formData.append("file", resume);
 
-      await axios.post(
-  `${import.meta.env.VITE_API_URL}/upload-resume`,
-  formData
-);
+  try {
+    const formData = new FormData();
+    formData.append("file", resume);
 
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/upload-resume`,
+      formData
+    );
+
+    console.log(res.data);
+
+    if (res.data.success) {
       showToast("Resume Uploaded ✅");
-
-    } catch (err) {
-      console.log(err);
-      showToast("Error Uploading Resume ❌");
+    } else {
+      showToast("Upload Failed ❌");
+      console.log(res.data);
     }
-  };
+
+  } catch (err) {
+    console.log(err.response?.data);
+    showToast("Upload Failed ❌");
+  }
+};
 
   return (
     <div className="admin">

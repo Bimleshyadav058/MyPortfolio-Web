@@ -122,7 +122,8 @@ def upload_resume():
 
     except Exception as e:
         print("RESUME ERROR:", e)
-        return jsonify({"success": False})
+        return jsonify({"success": False, "error": str(e)}), 500
+    
 @app.route("/download-resume")
 def download_resume():
     try:
