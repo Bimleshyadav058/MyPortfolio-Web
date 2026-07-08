@@ -103,9 +103,9 @@ def upload_resume():
 
         upload_result = cloudinary.uploader.upload(
     file,
+    resource_type="raw",
     folder="portfolio/resume",
-    use_filename=True,
-    unique_filename=False,
+    public_id="resume",
     overwrite=True
 )
 
