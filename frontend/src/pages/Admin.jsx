@@ -38,12 +38,22 @@ const [certificates, setCertificates] = useState([]);
   });
 };
 
- // ===== FETCH PROJECTS =====
+// ===== FETCH PROJECTS =====
 const loadProjects = () => {
-  axios.get(`${import.meta.env.VITE_API_URL}/projects`)
-      .then(res => setProjects(res.data))
-      .catch(err => console.log(err));
-  };
+  axios
+    .get(`${import.meta.env.VITE_API_URL}/projects`)
+    .then((res) => setProjects(res.data))
+    .catch((err) => console.log(err));
+};
+
+// ===== FETCH CERTIFICATES =====
+const loadCertificates = () => {
+  axios
+    .get(`${import.meta.env.VITE_API_URL}/certificates`)
+    .then((res) => setCertificates(res.data))
+    .catch((err) => console.log(err));
+};
+
 useEffect(() => {
   const isAdmin = localStorage.getItem("admin");
 
@@ -54,10 +64,8 @@ useEffect(() => {
 
   loadProjects();
   loadCertificates();
-}, []);
 
-console.log(projects); // 👈 ADD THIS
-
+}, [navigate]);
 
   // ===== SHOW TOAST =====
   const showToast = (msg) => {
@@ -67,6 +75,10 @@ console.log(projects); // 👈 ADD THIS
 
   // ===== UPLOAD PROJECT =====
 const uploadProject = async () => {
+  if (!title || !description) {
+    showToast("Fill all fields");
+    return;
+}
   try {
     const formData = new FormData();
 
@@ -106,6 +118,7 @@ const uploadProject = async () => {
     }
 
     loadProjects();
+    
 
     // RESET INPUTS
     setTitle("");
@@ -116,7 +129,7 @@ const uploadProject = async () => {
     setPpt(null);
     setResume(null);
 
-    document.querySelector('input[type="file"]').value = "";
+    //document.querySelector('input[type="file"]').value = "";
 
   } catch (err) {
     console.log(err);
@@ -169,10 +182,10 @@ const uploadProject = async () => {
 
     loadCertificates();
 
-  } catch {
-
+ } catch (err) {
+    console.log(err);
     showToast("Upload Failed ❌");
-  }
+}
 };
 
 
@@ -195,7 +208,12 @@ const deleteCertificate = async (id) => {
 };
 
   // ===== RESUME UPLOAD =====
-  const uploadResume = async () => {
+ const uploadResume = async () => {
+
+  if (!resume) {
+    showToast("Select Resume First");
+    return;
+  }
     try {
       const formData = new FormData();
       formData.append("file", resume);
@@ -208,6 +226,7 @@ const deleteCertificate = async (id) => {
       showToast("Resume Uploaded ✅");
 
     } catch (err) {
+      console.log(err);
       showToast("Error Uploading Resume ❌");
     }
   };
