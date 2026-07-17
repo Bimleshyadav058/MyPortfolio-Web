@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-from flask_mail import Mail, Message
+import requests
 from dotenv import load_dotenv
 import os
 import secrets
@@ -23,14 +23,7 @@ cloudinary.config(
     secure=True
 )
 
-# ===== MAIL CONFIG =====
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = os.getenv("MAIL_USER")
-app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASS")
-
-mail = Mail(app)
+BREVO_API_KEY = os.getenv("BREVO_API_KEY")
 
 # ===== ADMIN =====
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
@@ -69,29 +62,66 @@ def admin_login():
 @app.route("/contact", methods=["POST"])
 def contact():
     try:
+
         data = request.get_json()
 
-        msg = Message(
-            subject=f"New Contact from {data.get('name')}",
-            sender=os.getenv("MAIL_USER"),
-            recipients=[os.getenv("MAIL_USER")]
+        url = "https://api.brevo.com/v3/smtp/email"
+
+        headers = {
+            "accept": "application/json",
+            "api-key": BREVO_API_KEY,
+            "content-type": "application/json"
+        }
+
+        payload = {
+            "sender": {
+                "name": "Portfolio Website",
+                "email": "yadavbimleshnarayan98@gmail.com"
+            },
+
+            "to": [
+                {
+                    "email": "yadavbimleshnarayan98@gmail.com",
+                    "name": "Bimlesh"
+                }
+            ],
+
+           "subject": data.get("subject", f"New Contact From {data['name']}"),
+
+            "htmlContent": f"""
+            <h2>New Contact Form</h2>
+
+            <b>Name:</b> {data['name']} <br><br>
+
+            <b>Email:</b> {data['email']} <br><br>
+
+            <b>Message:</b><br>
+
+            {data['message']}
+            """
+        }
+
+        response = requests.post(
+            url,
+            json=payload,
+            headers=headers
         )
 
-        msg.body = f"""
-Name: {data.get('name')}
-Email: {data.get('email')}
+        if response.status_code == 201:
+            return jsonify({"success": True})
 
-Message:
-{data.get('message')}
-"""
-
-        mail.send(msg)
-        return jsonify({"success": True})
+        return jsonify({
+    "success": False,
+    "status": response.status_code,
+    "error": response.text
+}), response.status_code
 
     except Exception as e:
-        print("MAIL ERROR:", e)
-        return jsonify({"success": False})
 
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        })
 # ================= RESUME =================
 @app.route("/upload-resume", methods=["POST"])
 def upload_resume():
@@ -305,22 +335,67 @@ def forgot_password():
     email = request.json.get("email")
 
     if email != os.getenv("MAIL_USER"):
-        return jsonify({"error": "Not allowed"})
+        return jsonify({"error": "Not allowed"}), 403
 
     reset_token = secrets.token_hex(16)
-    new_admin_password = ADMIN_PASSWORD
 
-    msg = Message(
-        "Reset Password",
-        sender=os.getenv("MAIL_USER"),
-        recipients=[email],
-        body=f"http://localhost:5173/reset/{reset_token}"
-    )
+    FRONTEND_URL = "https://my-portfolio-web-u9sr.vercel.app"
 
+    reset_link = f"{FRONTEND_URL}/reset/{reset_token}"
 
-    mail.send(msg)
+    url = "https://api.brevo.com/v3/smtp/email"
 
-    return jsonify({"success": True})
+    headers = {
+        "accept": "application/json",
+        "api-key": BREVO_API_KEY,
+        "content-type": "application/json"
+    }
+
+    payload = {
+        "sender": {
+            "name": "Portfolio Website",
+            "email": "yadavbimleshnarayan98@gmail.com"
+        },
+        "to": [
+            {
+                "email": email,
+                "name": "Admin"
+            }
+        ],
+        "subject": "Reset Password",
+        "htmlContent": f"""
+        <h2>Password Reset</h2>
+
+        <p>Click the button below to reset your password.</p>
+
+        <p>
+            <a href="{reset_link}"
+               style="
+                    background:#f59e0b;
+                    color:white;
+                    padding:10px 18px;
+                    text-decoration:none;
+                    border-radius:6px;">
+                Reset Password
+            </a>
+        </p>
+
+        <p>Or copy this link:</p>
+
+        <p>{reset_link}</p>
+        """
+    }
+
+    response = requests.post(url, json=payload, headers=headers)
+
+    if response.status_code == 201:
+        return jsonify({"success": True})
+
+    return jsonify({
+        "success": False,
+        "status": response.status_code,
+        "error": response.text
+    }), response.status_code
 
 # ========== Reset API PASSWORD =================
 @app.route("/reset-password/<token>", methods=["POST"])
