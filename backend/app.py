@@ -3,6 +3,7 @@ from flask_cors import CORS
 import requests
 from dotenv import load_dotenv
 import os
+
 import secrets
 import werkzeug
 import json
@@ -106,6 +107,10 @@ def contact():
             json=payload,
             headers=headers
         )
+
+        print("Brevo Status:", response.status_code)
+        print("Brevo Response:", response.text)
+        
 
         if response.status_code == 201:
             return jsonify({"success": True})

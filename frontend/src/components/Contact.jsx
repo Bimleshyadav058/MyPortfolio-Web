@@ -12,10 +12,11 @@ function Contact() {
     const form = e.target;
 
     const data = {
-      name: form.name.value,
-      email: form.email.value,
-      message: form.message.value
-    };
+  name: form.name.value,
+  email: form.email.value,
+  subject: form.subject.value,
+  message: form.message.value
+};
 
     try {
       setLoading(true);
