@@ -209,6 +209,7 @@ const deleteCertificate = async (id) => {
 
   // ===== RESUME UPLOAD =====
  const uploadResume = async () => {
+  console.log("API =", import.meta.env.VITE_API_URL);
   if (!resume) {
     showToast("Select Resume First");
     return;
@@ -227,6 +228,7 @@ const deleteCertificate = async (id) => {
 
     if (res.data.success) {
       showToast("Resume Uploaded ✅");
+      
     } else {
       showToast("Upload Failed ❌");
       console.log(res.data);
@@ -398,7 +400,12 @@ const deleteCertificate = async (id) => {
       <div className="admin-box">
         <h2>Upload Resume</h2>
 
-        <input type="file" onChange={(e) => setResume(e.target.files[0])} />
+       <input
+  type="file"
+  accept=".pdf"
+  onChange={(e) => setResume(e.target.files[0])}
+/>
+        
         <button onClick={uploadResume}>Update Resume</button>
       </div>
 

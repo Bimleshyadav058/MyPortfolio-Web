@@ -133,9 +133,6 @@ def upload_resume():
     try:
         file = request.files["file"]
 
-        if not file:
-            return jsonify({"success": False, "error": "No file"})
-
         upload_result = cloudinary.uploader.upload(
     file,
     resource_type="raw",
@@ -144,20 +141,28 @@ def upload_resume():
     unique_filename=False,
     overwrite=True
 )
-        print(upload_result)
 
-        resume_data = {
-            "resume": upload_result["secure_url"]
-        }
+        print("UPLOAD RESULT =", upload_result)
 
         with open("resume.json", "w") as f:
-            json.dump(resume_data, f, indent=4)
+            json.dump(
+                {"resume": upload_result["secure_url"]},
+                f,
+                indent=4
+            )
 
-        return jsonify({"success": True})
+        return jsonify({
+            "success": True,
+            "url": upload_result["secure_url"]
+        })
 
     except Exception as e:
         print("RESUME ERROR:", e)
-        return jsonify({"success": False, "error": str(e)}), 500
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
     
 @app.route("/download-resume")
 def download_resume():
@@ -498,13 +503,6 @@ def delete_certificate(id):
 
     return jsonify({"success": True})
 
-# @app.route("/uploads/certificates/<filename>")
-# def certificate_file(filename):
-
-#     return send_from_directory(
-#         CERTIFICATE_FOLDER,
-#         filename
-#     )
 
 # ===== RUN =====
 if __name__ == "__main__":

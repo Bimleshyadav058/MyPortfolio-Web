@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../style.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function AdminLogin() {
+  const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [toast, setToast] = useState("");
@@ -20,7 +22,8 @@ function AdminLogin() {
 
       if (res.data.success) {
         localStorage.setItem("admin", "true");
-        window.location.href = "/admin";
+       // window.location.href = "/admin";
+       navigate("/admin");
       } else {
         setToast("Wrong Password ❌");
       }
